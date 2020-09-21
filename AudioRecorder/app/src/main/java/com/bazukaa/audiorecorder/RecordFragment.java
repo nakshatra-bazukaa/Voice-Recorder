@@ -11,6 +11,7 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import butterknife.BindView;
@@ -20,6 +21,8 @@ import butterknife.OnClick;
 public class RecordFragment extends Fragment {
 
     private NavController navController;
+
+    private boolean isRecording = false;
 
     public RecordFragment() {
         // Required empty public constructor
@@ -41,11 +44,19 @@ public class RecordFragment extends Fragment {
     }
 
     @OnClick(R.id.record_list_btn)
-    public void recordsBtnClicked(View v){
-        switch (v.getId()){
-        case R.id.record_list_btn:
-                navController.navigate(R.id.action_recordFragment_to_audioListFragment);
-            break;
+    public void recordsListBtnClicked(View v){
+        navController.navigate(R.id.action_recordFragment_to_audioListFragment);
+    }
+    @OnClick(R.id.record_btn)
+    public void recordBtnClicked(View v){
+        if(isRecording){
+            // Stop rec
+            ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.record_btn_paused, null));
+            isRecording = false;
+        }else{
+            // Start rec
+            ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.record_btn_start, null));
+            isRecording = true;
         }
 
     }
