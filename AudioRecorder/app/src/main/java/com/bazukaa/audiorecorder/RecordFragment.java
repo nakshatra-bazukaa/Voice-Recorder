@@ -1,9 +1,12 @@
 package com.bazukaa.audiorecorder;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -12,9 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
-import butterknife.BindView;
+import com.bazukaa.audiorecorder.util.Constants;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -22,7 +25,7 @@ public class RecordFragment extends Fragment {
 
     private NavController navController;
 
-    private boolean isRecording = false;
+    private boolean isNotRecording = true;
 
     public RecordFragment() {
         // Required empty public constructor
@@ -49,15 +52,24 @@ public class RecordFragment extends Fragment {
     }
     @OnClick(R.id.record_btn)
     public void recordBtnClicked(View v){
-        if(isRecording){
-            // Stop rec
-            ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.record_btn_paused, null));
-            isRecording = false;
-        }else{
+        if(isNotRecording && checkAudioPermission()){
             // Start rec
+            ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.record_btn_stop, null));
+            isNotRecording = false;
+        }else{
+            // Stop rec
             ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.record_btn_start, null));
-            isRecording = true;
+            isNotRecording = true;
         }
 
+    }
+
+    private boolean checkAudioPermission() {
+        if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED){
+            return true;
+        }else{
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, Constants.RECORD_AUDIO_PERMISSION);
+            return false;
+        }
     }
 }
