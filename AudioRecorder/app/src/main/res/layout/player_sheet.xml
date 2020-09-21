@@ -98,7 +98,7 @@
         app:layout_constraintEnd_toStartOf="@+id/player_play_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/player_play_btn"
-        app:srcCompat="@drawable/ic_forward" />
+        app:srcCompat="@drawable/ic_fast_rewind" />
 
     <ImageButton
         android:id="@+id/imageView4"
@@ -111,7 +111,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/player_play_btn"
         app:layout_constraintTop_toTopOf="@+id/player_play_btn"
-        app:srcCompat="@drawable/ic_fast_rewind" />
+        app:srcCompat="@drawable/ic_forward" />
 
     <SeekBar
         android:layout_width="0dp"
