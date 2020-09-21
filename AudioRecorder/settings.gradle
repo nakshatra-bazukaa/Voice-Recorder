@@ -1,0 +1,2 @@
+rootProject.name='Audio Recorder'
+include ':app'
