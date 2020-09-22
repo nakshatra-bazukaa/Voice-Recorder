@@ -10,10 +10,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +28,7 @@ import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class AudioListFragment extends Fragment implements AudioListAdapter.onAudioItemListClick {
@@ -40,6 +43,8 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
     TextView playerTitle;
     @BindView(R.id.player_filename)
     TextView playerFilename;
+    @BindView(R.id.player_seekbar)
+    SeekBar playerSeekbar;
 
     private File[] allFiles;
     private File fileToPlay;
@@ -51,6 +56,9 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
     private MediaPlayer mediaPlayer = null;
 
     private boolean isPlaying = false;
+
+    private Handler seekbarHandler;
+    private Runnable updateSeekbar;
 
     public AudioListFragment() {
         // Required empty public constructor
@@ -89,22 +97,54 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
         });
+
+        playerSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                pauseAudio();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if(fileToPlay != null){
+                    int progress = seekBar.getProgress();
+                    mediaPlayer.seekTo(progress);
+                }
+                resumeAudio();
+            }
+        });
     }
 
     @Override
     public void onClickListener(File file, int position) {
+        fileToPlay = file;
         if(isPlaying){
             stopAudioRecord();
+            playAudioRecord(fileToPlay);
         }else{
-            fileToPlay = file;
             playAudioRecord(fileToPlay);
         }
     }
-
+    @OnClick(R.id.player_play_btn)
+    public void playBtnClicked(){
+        if(isPlaying){
+            pauseAudio();
+        }else{
+            if(fileToPlay != null)
+                resumeAudio();
+        }
+    }
     private void stopAudioRecord() {
         btnPlay.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_play, null));
         playerTitle.setText("Stopped");
         isPlaying = false;
+        mediaPlayer.stop();
+        seekbarHandler.removeCallbacks(updateSeekbar);
     }
 
     private void playAudioRecord(File fileToPlay) {
@@ -129,5 +169,42 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
             stopAudioRecord();
             playerTitle.setText("Finished");
         });
+
+        playerSeekbar.setMax(mediaPlayer.getDuration());
+
+        seekbarHandler = new Handler();
+        updateRunnable();
+        seekbarHandler.postDelayed(updateSeekbar, 0);
+    }
+
+    private void updateRunnable() {
+        updateSeekbar = new Runnable() {
+            @Override
+            public void run() {
+                playerSeekbar.setProgress(mediaPlayer.getCurrentPosition());
+                seekbarHandler.postDelayed(this, 500);
+            }
+        };
+    }
+
+    private void pauseAudio(){
+        mediaPlayer.pause();
+        btnPlay.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_play, null));
+        isPlaying = false;
+        seekbarHandler.removeCallbacks(updateSeekbar);
+    }
+    private void resumeAudio(){
+        mediaPlayer.start();
+        btnPlay.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_pause, null));
+        isPlaying = true;
+        updateRunnable();
+        seekbarHandler.postDelayed(updateSeekbar, 0);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (isPlaying)
+            stopAudioRecord();
     }
 }

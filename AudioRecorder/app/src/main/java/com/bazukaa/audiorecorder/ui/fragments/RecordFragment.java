@@ -1,6 +1,8 @@
 package com.bazukaa.audiorecorder.ui.fragments;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -64,7 +66,22 @@ public class RecordFragment extends Fragment {
 
     @OnClick(R.id.record_list_btn)
     public void recordsListBtnClicked(View v){
-        navController.navigate(R.id.action_recordFragment_to_audioListFragment);
+        if(isNotRecording)
+            navController.navigate(R.id.action_recordFragment_to_audioListFragment);
+        else{
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+            alertDialog.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    navController.navigate(R.id.action_recordFragment_to_audioListFragment);
+                    isNotRecording = true;
+                }
+            });
+            alertDialog.setNegativeButton("CANCEL", null);
+            alertDialog.setTitle("Audio Still recording");
+            alertDialog.setMessage("Are you sure, you want to stop the recording?");
+            alertDialog.create().show();
+        }
     }
     @OnClick(R.id.record_btn)
     public void recordBtnClicked(View v){
@@ -118,5 +135,11 @@ public class RecordFragment extends Fragment {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, Constants.RECORD_AUDIO_PERMISSION);
             return false;
         }
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(!isNotRecording)
+            startRecording();
     }
 }
