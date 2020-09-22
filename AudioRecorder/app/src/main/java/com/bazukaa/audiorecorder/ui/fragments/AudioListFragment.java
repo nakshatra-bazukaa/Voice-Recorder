@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bazukaa.audiorecorder.R;
@@ -32,6 +34,12 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
     ConstraintLayout playerSheet;
     @BindView(R.id.audio_list_view)
     RecyclerView rvAudioList;
+    @BindView(R.id.player_play_btn)
+    ImageButton btnPlay;
+    @BindView(R.id.player_header_title)
+    TextView playerTitle;
+    @BindView(R.id.player_filename)
+    TextView playerFilename;
 
     private File[] allFiles;
     private File fileToPlay;
@@ -94,11 +102,15 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
     }
 
     private void stopAudioRecord() {
+        btnPlay.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_play, null));
+        playerTitle.setText("Stopped");
         isPlaying = false;
     }
 
     private void playAudioRecord(File fileToPlay) {
         mediaPlayer = new MediaPlayer();
+
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
         try {
             mediaPlayer.setDataSource(fileToPlay.getAbsolutePath());
@@ -108,6 +120,14 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
+        btnPlay.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_pause, null));
+        playerFilename.setText(fileToPlay.getName());
+        playerTitle.setText("Playing");
         isPlaying = true;
+
+        mediaPlayer.setOnCompletionListener(mp -> {
+            stopAudioRecord();
+            playerTitle.setText("Finished");
+        });
     }
 }
