@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bazukaa.audiorecorder.R;
+import com.bazukaa.audiorecorder.util.LongToTime;
 
 import java.io.File;
 
@@ -17,13 +18,19 @@ public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.Audi
 
     File[] allFiles;
 
-    public AudioListAdapter(File[] allFiles) {
+    private LongToTime longToTime;
+
+    private onAudioItemListClick onAudioItemListClick;
+
+    public AudioListAdapter(File[] allFiles, onAudioItemListClick onAudioItemListClick) {
         this.allFiles = allFiles;
+        this.onAudioItemListClick = onAudioItemListClick;
     }
 
     @NonNull
     @Override
     public AudioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        longToTime = new LongToTime();
         return new AudioViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.audio_list_item, parent, false));
     }
     @Override
@@ -35,7 +42,7 @@ public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.Audi
         return allFiles.length;
     }
 
-    public class AudioViewHolder extends RecyclerView.ViewHolder{
+    public class AudioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView listImage;
         private TextView listTitle, listDate;
@@ -45,11 +52,22 @@ public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.Audi
             listImage = itemView.findViewById(R.id.list_image_view);
             listTitle = itemView.findViewById(R.id.list_title);
             listDate = itemView.findViewById(R.id.list_date);
+
+            itemView.setOnClickListener(this);
         }
 
         void setAudioListData(File audioRecord){
             listTitle.setText(audioRecord.getName());
-            listDate.setText(audioRecord.lastModified() + "");
+            listDate.setText(longToTime.convertFromLongToTime(audioRecord.lastModified()));
         }
+
+        @Override
+        public void onClick(View v) {
+            onAudioItemListClick.onClickListener(allFiles[getAdapterPosition()], getAdapterPosition());
+        }
+    }
+
+    public interface onAudioItemListClick{
+        void onClickListener(File file, int position);
     }
 }

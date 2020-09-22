@@ -1,5 +1,6 @@
 package com.bazukaa.audiorecorder.ui.fragments;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,18 +13,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bazukaa.audiorecorder.R;
 import com.bazukaa.audiorecorder.adapters.AudioListAdapter;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.io.File;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class AudioListFragment extends Fragment {
+public class AudioListFragment extends Fragment implements AudioListAdapter.onAudioItemListClick {
 
     @BindView(R.id.player_sheet)
     ConstraintLayout playerSheet;
@@ -31,10 +34,15 @@ public class AudioListFragment extends Fragment {
     RecyclerView rvAudioList;
 
     private File[] allFiles;
+    private File fileToPlay;
 
     private BottomSheetBehavior bottomSheetBehavior;
 
     private AudioListAdapter adapter;
+
+    private MediaPlayer mediaPlayer = null;
+
+    private boolean isPlaying = false;
 
     public AudioListFragment() {
         // Required empty public constructor
@@ -42,7 +50,6 @@ public class AudioListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_audio_list, container, false);
         ButterKnife.bind(this, view);
         return view;
@@ -56,7 +63,7 @@ public class AudioListFragment extends Fragment {
         File dir = new File(path);
         allFiles = dir.listFiles();
 
-        adapter = new AudioListAdapter(allFiles);
+        adapter = new AudioListAdapter(allFiles, this);
 
         rvAudioList.setHasFixedSize(true);
         rvAudioList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -72,9 +79,35 @@ public class AudioListFragment extends Fragment {
                 }
             }
             @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
         });
+    }
+
+    @Override
+    public void onClickListener(File file, int position) {
+        if(isPlaying){
+            stopAudioRecord();
+        }else{
+            fileToPlay = file;
+            playAudioRecord(fileToPlay);
+        }
+    }
+
+    private void stopAudioRecord() {
+        isPlaying = false;
+    }
+
+    private void playAudioRecord(File fileToPlay) {
+        mediaPlayer = new MediaPlayer();
+
+        try {
+            mediaPlayer.setDataSource(fileToPlay.getAbsolutePath());
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        isPlaying = true;
     }
 }
