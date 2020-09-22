@@ -1,6 +1,6 @@
 <img src="Icons/drawable-xxxhdpi/Group 1.png" align="right" height="150" width="150" />
 
-# Audio RECORDER - An Audio Recorder [![Generic badge](https://img.shields.io/badge/AudioRecorder-Download-<COLOR>.svg)]() 
+# Audio RECORDER - An Audio Recorder [![Generic badge](https://img.shields.io/badge/AudioRecorder-Download-<COLOR>.svg)](https://drive.google.com/file/d/1hMs7VbRlxcKceAs9BifuPSw5fETkEzB6/view?usp=sharing) 
 
 # Project Description
 1. It is an open-source Android application that allows people to record audio.
@@ -8,7 +8,7 @@
 3. The user can easily record audio and view previous recordings. 
 
 # Download the App
-[![Generic badge](https://img.shields.io/badge/AudioRecorder-Download-<COLOR>.svg)]()
+[![Generic badge](https://img.shields.io/badge/AudioRecorder-Download-<COLOR>.svg)](https://drive.google.com/file/d/1hMs7VbRlxcKceAs9BifuPSw5fETkEzB6/view?usp=sharing)
 
 # Project Structure
 ```bash
