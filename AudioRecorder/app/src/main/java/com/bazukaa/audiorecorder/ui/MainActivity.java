@@ -1,8 +1,10 @@
-package com.bazukaa.audiorecorder;
+package com.bazukaa.audiorecorder.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.bazukaa.audiorecorder.R;
 
 public class MainActivity extends AppCompatActivity {
 

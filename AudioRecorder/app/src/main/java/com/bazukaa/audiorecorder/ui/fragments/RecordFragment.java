@@ -1,4 +1,4 @@
-package com.bazukaa.audiorecorder;
+package com.bazukaa.audiorecorder.ui.fragments;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -20,6 +20,7 @@ import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.bazukaa.audiorecorder.R;
 import com.bazukaa.audiorecorder.util.Constants;
 
 import java.io.IOException;
