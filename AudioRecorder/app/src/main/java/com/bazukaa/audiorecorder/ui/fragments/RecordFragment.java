@@ -70,12 +70,9 @@ public class RecordFragment extends Fragment {
             navController.navigate(R.id.action_recordFragment_to_audioListFragment);
         else{
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-            alertDialog.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    navController.navigate(R.id.action_recordFragment_to_audioListFragment);
-                    isNotRecording = true;
-                }
+            alertDialog.setPositiveButton("OKAY", (dialog, which) -> {
+                navController.navigate(R.id.action_recordFragment_to_audioListFragment);
+                isNotRecording = true;
             });
             alertDialog.setNegativeButton("CANCEL", null);
             alertDialog.setTitle("Audio Still recording");

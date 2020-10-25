@@ -16,7 +16,7 @@ import java.io.File;
 
 public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.AudioViewHolder> {
 
-    File[] allFiles;
+    private File[] allFiles;
 
     private LongToTime longToTime;
 
@@ -27,11 +27,19 @@ public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.Audi
         this.onAudioItemListClick = onAudioItemListClick;
     }
 
+
     @NonNull
     @Override
     public AudioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         longToTime = new LongToTime();
-        return new AudioViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.audio_list_item, parent, false));
+        return new AudioViewHolder(LayoutInflater
+                .from(parent.getContext())
+                .inflate(
+                        R.layout.audio_list_item,
+                        parent,
+                        false
+                )
+        );
     }
     @Override
     public void onBindViewHolder(@NonNull AudioViewHolder holder, int position) {
@@ -41,6 +49,7 @@ public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.Audi
     public int getItemCount() {
         return allFiles.length;
     }
+
 
     public class AudioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -66,6 +75,7 @@ public class AudioListAdapter extends RecyclerView.Adapter<AudioListAdapter.Audi
             onAudioItemListClick.onClickListener(allFiles[getAdapterPosition()], getAdapterPosition());
         }
     }
+
 
     public interface onAudioItemListClick{
         void onClickListener(File file, int position);

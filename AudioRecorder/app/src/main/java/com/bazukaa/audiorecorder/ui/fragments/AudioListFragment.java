@@ -148,6 +148,7 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
     }
 
     private void playAudioRecord(File fileToPlay) {
+        playerSeekbar.setProgress(0);
         mediaPlayer = new MediaPlayer();
 
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -170,19 +171,24 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
             playerTitle.setText("Finished");
         });
 
-        playerSeekbar.setMax(mediaPlayer.getDuration());
+        int duration = mediaPlayer.getDuration();
+        int amountToUpdate = duration/100;
 
         seekbarHandler = new Handler();
-        updateRunnable();
+        updateRunnable(duration, amountToUpdate);
         seekbarHandler.postDelayed(updateSeekbar, 0);
     }
 
-    private void updateRunnable() {
+    private void updateRunnable(int duration, int amountToUpdate) {
         updateSeekbar = new Runnable() {
             @Override
             public void run() {
-                playerSeekbar.setProgress(mediaPlayer.getCurrentPosition());
-                seekbarHandler.postDelayed(this, 500);
+                if(!(amountToUpdate * playerSeekbar.getProgress() >= duration)){
+                    int p = playerSeekbar.getProgress();
+                    p += 1;
+                    playerSeekbar.setProgress(p);
+                }
+                seekbarHandler.postDelayed(this, amountToUpdate);
             }
         };
     }
@@ -197,7 +203,9 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
         mediaPlayer.start();
         btnPlay.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_pause, null));
         isPlaying = true;
-        updateRunnable();
+        int duration = mediaPlayer.getDuration();
+        int amountToUpdate = duration/100;
+        updateRunnable(duration, amountToUpdate);
         seekbarHandler.postDelayed(updateSeekbar, 0);
     }
 
