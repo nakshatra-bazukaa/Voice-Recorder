@@ -89,7 +89,7 @@
         app:srcCompat="@drawable/ic_play" />
 
     <ImageButton
-        android:id="@+id/imageView3"
+        android:id="@+id/player_back_btn"
         android:background="@color/colorPrimary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -102,7 +102,7 @@
         app:srcCompat="@drawable/ic_fast_rewind" />
 
     <ImageButton
-        android:id="@+id/imageView4"
+        android:id="@+id/player_forward_btn"
         android:background="@color/colorPrimary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

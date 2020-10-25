@@ -48,6 +48,7 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
 
     private File[] allFiles;
     private File fileToPlay;
+    private int filePosition;
 
     private BottomSheetBehavior bottomSheetBehavior;
 
@@ -123,6 +124,7 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
     @Override
     public void onClickListener(File file, int position) {
         fileToPlay = file;
+        filePosition = position;
         if(isPlaying){
             stopAudioRecord();
             playAudioRecord(fileToPlay);
@@ -132,11 +134,28 @@ public class AudioListFragment extends Fragment implements AudioListAdapter.onAu
     }
     @OnClick(R.id.player_play_btn)
     public void playBtnClicked(){
-        if(isPlaying){
+        if(isPlaying)
             pauseAudio();
-        }else{
-            if(fileToPlay != null)
+        else if(fileToPlay != null)
                 resumeAudio();
+
+    }
+    @OnClick(R.id.player_back_btn)
+    public void playPrevBtnClicked(){
+        if(isPlaying)
+            stopAudioRecord();
+        if(filePosition != 0)
+            filePosition--;
+        playAudioRecord(allFiles[filePosition]);
+        fileToPlay = allFiles[filePosition];
+    }
+    @OnClick(R.id.player_forward_btn)
+    public void playNextBtnClicked(){
+        if(filePosition != allFiles.length - 1){
+            if(isPlaying)
+                stopAudioRecord();
+            playAudioRecord(allFiles[++filePosition]);
+            fileToPlay = allFiles[filePosition];
         }
     }
     private void stopAudioRecord() {
